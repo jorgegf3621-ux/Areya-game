@@ -19,6 +19,27 @@ export default function Console() {
   const sessionId = params.get('session')
   const { session, players, answers, loading } = useGameSession(sessionId)
 
+  // Adaptive row sizing
+  const raceRef = useRef(null)
+  const [rowH, setRowH] = useState(32)
+  useEffect(() => {
+    const measure = () => {
+      if (!raceRef.current) return
+      const h = raceRef.current.clientHeight
+      const count = Math.max(players.length, 1)
+      setRowH(Math.min(72, Math.max(18, Math.floor(h / count))))
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    if (raceRef.current) ro.observe(raceRef.current)
+    return () => ro.disconnect()
+  }, [players.length])
+
+  const horseSize  = Math.min(32, Math.max(12, Math.floor(rowH * 0.62)))
+  const trackH     = Math.min(22, Math.max(7,  Math.floor(rowH * 0.36)))
+  const nameFsMain = Math.min(15, Math.max(9,  Math.floor(rowH * 0.40)))
+  const nameFsSub  = Math.min(11, Math.max(7,  Math.floor(rowH * 0.28)))
+
   const curQ = session?.current_question ?? -1
   const question = curQ >= 0 ? QUESTIONS[curQ] : null
 
@@ -146,7 +167,16 @@ export default function Console() {
       )}
 
       {/* ── RACE TRACK ── */}
-      <div className={styles.race}>
+      <div
+        className={styles.race}
+        ref={raceRef}
+        style={{
+          '--horse': `${horseSize}px`,
+          '--track': `${trackH}px`,
+          '--name-main': `${nameFsMain}px`,
+          '--name-sub': `${nameFsSub}px`,
+        }}
+      >
         {/* Finish line overlay */}
         <div className={styles.finishOverlay}>
           <span className={styles.finishFlag}>🏁</span>
@@ -170,7 +200,7 @@ export default function Console() {
             <div
               key={p.id}
               className={`${styles.row} ${isWinner ? styles.rowWinner : ''}`}
-              style={{ '--c': color }}
+              style={{ '--c': color, height: rowH }}
             >
               {/* Horse name + player name */}
               <div className={styles.nameCol}>
