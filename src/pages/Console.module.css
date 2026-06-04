@@ -1,27 +1,327 @@
-.wrap { min-height:100vh; background:#282E38; padding:12px; display:flex; flex-direction:column; gap:10px; }
-.header { display:flex; align-items:center; gap:14px; padding:8px 0; border-bottom:1px solid rgba(243,114,42,.2); }
-.gameTitle { font-family:'Fredoka One',cursive; font-size:1.5rem; color:#F3722A; letter-spacing:2px; text-shadow:0 0 16px rgba(243,114,42,.35); flex:1; text-align:center; }
-.sessionCode { font-size:.8rem; color:#8597AC; font-weight:700; }
-.questionBox { background:rgba(255,255,255,.04); border:1px solid rgba(243,114,42,.2); border-radius:14px; padding:14px 18px; }
-.qTop { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
-.qNum { font-size:.72rem; color:#8597AC; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; }
-.timerNum { font-family:'Fredoka One',cursive; font-size:1.2rem; transition:color .3s; }
-.timerBar { height:7px; background:rgba(255,255,255,.08); border-radius:4px; overflow:hidden; margin-bottom:10px; }
-.timerFill { height:100%; border-radius:4px; transition:width .1s linear, background .5s; }
-.qText { font-size:1.05rem; color:#E1E6EB; font-weight:700; line-height:1.4; margin-bottom:10px; text-align:center; }
-.qOpts { display:grid; gap:6px; }
-.qOpt { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:8px 12px; display:flex; align-items:center; gap:8px; font-size:.88rem; color:#D6DCE3; }
-.qOptLetter { font-family:'Fredoka One',cursive; color:#F3722A; font-size:.95rem; min-width:18px; }
-.waiting { text-align:center; padding:20px; }
-.waitingIcon { font-size:2.5rem; margin-bottom:6px; }
-.waitingText { font-family:'Fredoka One',cursive; font-size:1.4rem; color:#F3722A; }
-.waitingCount { font-size:1rem; color:#8597AC; margin:4px 0; }
-.joinUrl { font-size:.8rem; color:#8597AC; margin-top:8px; background:rgba(255,255,255,.04); padding:8px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.08); }
-.finishedBanner { background:linear-gradient(135deg,rgba(243,114,42,.15),rgba(228,99,14,.1)); border:1px solid #F3722A; border-radius:12px; padding:12px 20px; text-align:center; font-family:'Fredoka One',cursive; font-size:1.5rem; color:#F3722A; }
-.towersGrid { display:grid; gap:10px; flex:1; }
-.towerCol { display:flex; flex-direction:column; align-items:center; gap:4px; }
-.playerName { font-family:'Fredoka One',cursive; font-size:.88rem; text-align:center; }
-.playerScore { font-size:.72rem; color:#8597AC; font-weight:700; }
-.footer { text-align:center; font-size:.75rem; color:#676B73; padding:4px 0; border-top:1px solid rgba(255,255,255,.06); }
-.noSession, .loading { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; color:#8597AC; font-size:1rem; }
-.noSession h2 { font-family:'Fredoka One',cursive; color:#F3722A; font-size:1.6rem; }
+/* ── Layout base ── */
+.wrap {
+  height: 100vh;
+  background: #282E38;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 22px;
+  height: 50px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(243,114,42,.2);
+}
+.gameTitle {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.35rem;
+  color: #F3722A;
+  letter-spacing: 2px;
+  text-shadow: 0 0 18px rgba(243,114,42,.3);
+  flex: 1;
+  text-align: center;
+}
+.sessionCode {
+  font-size: .78rem;
+  color: #8597AC;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ── Winner banner ── */
+.winnerBanner {
+  flex-shrink: 0;
+  padding: 8px 24px;
+  background: linear-gradient(135deg, rgba(243,114,42,.18), rgba(228,99,14,.12));
+  border-bottom: 2px solid #F3722A;
+  text-align: center;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.7rem;
+  color: #F3722A;
+  text-shadow: 0 0 20px rgba(243,114,42,.45);
+  letter-spacing: 1px;
+}
+
+/* ── Main split ── */
+.mainSplit {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 44% 56%;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Left panel: pregunta ── */
+.leftPanel {
+  border-right: 1px solid rgba(243,114,42,.12);
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Waiting / finished state */
+.waitState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.waitIcon  { font-size: 3.2rem; }
+.waitTitle {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.7rem;
+  color: #F3722A;
+}
+.waitCount { font-size: 1rem; color: #8597AC; }
+.waitUrl {
+  font-size: .82rem;
+  color: #8597AC;
+  background: rgba(255,255,255,.04);
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.08);
+  word-break: break-all;
+  max-width: 420px;
+}
+
+/* Question panel */
+.qPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.qMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.qNum {
+  font-size: .68rem;
+  color: #8597AC;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.qAnswered {
+  font-size: .68rem;
+  color: #676B73;
+  margin-left: auto;
+}
+.timerNum {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.45rem;
+  transition: color .3s;
+  min-width: 54px;
+  text-align: right;
+}
+.timerBar {
+  height: 7px;
+  background: rgba(255,255,255,.07);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.timerFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width .1s linear, background .5s;
+}
+.qText {
+  font-size: clamp(1.2rem, 2.1vw, 1.85rem);
+  color: #E1E6EB;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.qOpts {
+  display: grid;
+  gap: 9px;
+}
+.qOpt {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  padding: 11px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: clamp(.88rem, 1.1vw, 1.05rem);
+  color: #D6DCE3;
+  line-height: 1.3;
+}
+.qLetter {
+  font-family: 'Fredoka One', cursive;
+  color: #F3722A;
+  font-size: 1.05rem;
+  min-width: 22px;
+  flex-shrink: 0;
+}
+
+/* ── Right panel: marcador ── */
+.rightPanel {
+  padding: 16px 22px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+.leaderHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.leaderTitle {
+  font-family: 'Fredoka One', cursive;
+  font-size: .95rem;
+  color: #F3722A;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.leaderCount {
+  font-size: .72rem;
+  color: #676B73;
+  font-weight: 700;
+}
+
+/* Leader rows */
+.leaderList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.leaderRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: rgba(255,255,255,.03);
+  transition: background .2s;
+}
+.rank {
+  font-size: .72rem;
+  font-weight: 700;
+  min-width: 28px;
+  text-align: center;
+}
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.pName {
+  font-size: .85rem;
+  color: #D6DCE3;
+  font-weight: 700;
+  min-width: 70px;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.answeredBadge {
+  font-size: .62rem;
+  color: #4ECDC4;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.barWrap {
+  flex: 1;
+  height: 7px;
+  background: rgba(255,255,255,.07);
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 0;
+}
+.barFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width .45s ease;
+  opacity: .9;
+}
+.pct {
+  font-size: .68rem;
+  color: #8597AC;
+  min-width: 32px;
+  text-align: right;
+  font-weight: 700;
+}
+
+/* Rest players */
+.restSection {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.07);
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+.restLabel {
+  font-size: .62rem;
+  color: #676B73;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.restGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.chip {
+  font-size: .72rem;
+  color: #8597AC;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+.noPlayers {
+  text-align: center;
+  color: #676B73;
+  font-size: .85rem;
+  margin-top: 24px;
+}
+
+/* ── Footer ── */
+.footer {
+  flex-shrink: 0;
+  text-align: center;
+  font-size: .7rem;
+  color: #676B73;
+  padding: 5px 0;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+/* ── No session / loading ── */
+.noSession,
+.loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #8597AC;
+  background: #282E38;
+}
+.noSession h2 {
+  font-family: 'Fredoka One', cursive;
+  color: #F3722A;
+  font-size: 1.6rem;
+  margin: 0;
+}
