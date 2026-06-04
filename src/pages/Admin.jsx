@@ -9,13 +9,17 @@ export default function Admin() {
   const [players, setPlayers]   = useState([])
   const [answers, setAnswers]   = useState([])
   const [creating, setCreating] = useState(false)
+  const [error, setError]       = useState(null)
 
   async function createSession() {
     setCreating(true)
+    setError(null)
     const { data, error } = await supabase.from('game_sessions')
       .insert({ status: 'waiting', current_question: -1 })
       .select().single()
-    if (!error) {
+    if (error) {
+      setError(`Error Supabase: ${error.message} (code: ${error.code})`)
+    } else {
       setSession(data)
       setPlayers([])
       setAnswers([])
@@ -80,6 +84,11 @@ export default function Admin() {
           <div className={styles.bigIcon}>🎮</div>
           <h3>Crear nueva sesión</h3>
           <p>Se generará un código único para esta partida</p>
+          {error && (
+            <div style={{ background:'rgba(220,50,50,.15)', border:'1px solid rgba(220,50,50,.5)', borderRadius:8, padding:'10px 16px', marginBottom:12, color:'#ff7070', fontSize:13, maxWidth:480, textAlign:'left', wordBreak:'break-all' }}>
+              {error}
+            </div>
+          )}
           <button className={styles.btnOrange} onClick={createSession} disabled={creating}>
             {creating ? 'Creando...' : '🔫 Nueva Sesión'}
           </button>
