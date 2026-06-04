@@ -71,6 +71,26 @@ export default function Admin() {
   const consoleUrl = `${window.location.origin}/?session=${session?.id}`
   const playUrl    = `${window.location.origin}/play?session=${session?.id}`
 
+  function downloadCSV() {
+    const rows = [
+      ['Nombre', 'Caballo', 'Correctas', 'Agua %'],
+      ...players.map(p => [
+        p.name,
+        p.horse_name || '—',
+        (answersByPlayer[p.id] || []).filter(a => a.is_correct).length,
+        Math.round((p.water_level || 0) * 100)
+      ])
+    ]
+    const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n')
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `areya-jugadores-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className={styles.wrap}>
       <div className={styles.header}>
@@ -147,11 +167,18 @@ export default function Admin() {
 
           {/* PLAYERS TABLE */}
           <div className={styles.playersCard}>
-            <div className={styles.cardTitle}>Jugadores ({players.length})</div>
+            <div className={styles.cardTitleRow}>
+              <span className={styles.cardTitle}>Jugadores ({players.length})</span>
+              {players.length > 0 && (
+                <button className={styles.btnDownload} onClick={downloadCSV}>
+                  ⬇ Descargar lista CSV
+                </button>
+              )}
+            </div>
             <div className={styles.tableWrap}>
               <table className={styles.table}>
                 <thead>
-                  <tr><th>Nombre</th><th>Correctas</th><th>Agua</th><th>Esta Q</th></tr>
+                  <tr><th>Nombre</th><th>Caballo 🏇</th><th>Correctas</th><th>Agua</th><th>Esta Q</th></tr>
                 </thead>
                 <tbody>
                   {players.map(p => {
@@ -160,6 +187,7 @@ export default function Admin() {
                     return (
                       <tr key={p.id}>
                         <td className={styles.nameTd}>{p.name}</td>
+                        <td className={styles.nameTd} style={{color:'#F3722A'}}>{p.horse_name || '—'}</td>
                         <td className={styles.centerTd}>{correct}</td>
                         <td>
                           <div className={styles.miniBar}>

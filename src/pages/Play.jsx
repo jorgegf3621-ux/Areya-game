@@ -13,6 +13,7 @@ export default function Play() {
 
   const [phase, setPhase]       = useState('register') // register | waiting | playing | answered | finished
   const [name, setName]         = useState('')
+  const [horseName, setHorseName] = useState('')
   const [player, setPlayer]     = useState(null)
   const [session, setSession]   = useState(null)
   const [selected, setSelected] = useState(null)
@@ -72,9 +73,9 @@ export default function Play() {
   }, [phase, curQ, selected])
 
   async function register() {
-    if (!name.trim() || !sessionId) return
+    if (!name.trim() || !horseName.trim() || !sessionId) return
     const { data, error } = await supabase.from('players')
-      .insert({ session_id: sessionId, name: name.trim(), water_level: 0, score: 0 })
+      .insert({ session_id: sessionId, name: name.trim(), horse_name: horseName.trim(), water_level: 0, score: 0 })
       .select().single()
     if (!error) { setPlayer(data); setPhase('waiting') }
   }
@@ -131,7 +132,7 @@ export default function Play() {
       <div className={styles.center}>
         <AreyaLogo size={44} />
         <h2 className={styles.title}>💦 Agua, Agua, Agua!</h2>
-        <p className={styles.sub}>Ingresa tu nombre para unirte al juego</p>
+        <p className={styles.sub}>Ingresa tu nombre y el nombre de tu caballo 🏇</p>
         <input
           className={styles.nameInput}
           type="text"
@@ -139,10 +140,18 @@ export default function Play() {
           value={name}
           maxLength={20}
           onChange={e => setName(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && register()}
           autoFocus
         />
-        <button className={styles.btnPrimary} onClick={register} disabled={!name.trim()}>
+        <input
+          className={styles.nameInput}
+          type="text"
+          placeholder="Nombre de tu caballo..."
+          value={horseName}
+          maxLength={20}
+          onChange={e => setHorseName(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && register()}
+        />
+        <button className={styles.btnPrimary} onClick={register} disabled={!name.trim() || !horseName.trim()}>
           🔫 ¡ENTRAR AL JUEGO!
         </button>
       </div>

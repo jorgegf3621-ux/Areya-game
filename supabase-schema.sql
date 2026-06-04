@@ -16,6 +16,7 @@ create table if not exists players (
   id          uuid primary key default gen_random_uuid(),
   session_id  uuid not null references game_sessions(id) on delete cascade,
   name        text not null,
+  horse_name  text not null default 'Campeón',
   water_level float not null default 0,
   score       integer not null default 0,
   joined_at   timestamptz default now()

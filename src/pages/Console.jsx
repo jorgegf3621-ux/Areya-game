@@ -6,12 +6,12 @@ import { QUESTIONS } from '../data/questions'
 import styles from './Console.module.css'
 
 const TIMER_SEC = 15
-const TOP_N = 14
-
+const SPEED_BONUS = [0.18, 0.13, 0.09]
 const COLORS = [
-  '#F3722A','#4ECDC4','#F18A21','#45B7D1','#F5B979','#96CEB4',
-  '#E4630E','#DDA0DD','#F3722A','#85C1E9','#F18A21','#82E0AA',
-  '#F5B979','#F1948A','#E4630E','#FAD7A0',
+  '#F3722A','#4ECDC4','#F18A21','#45B7D1','#96CEB4','#DDA0DD',
+  '#E4630E','#85C1E9','#F5B979','#82E0AA','#F1948A','#FAD7A0',
+  '#BB8FCE','#FF6B9D','#C7EFCF','#FFA552','#7EC8E3','#B8E0D2',
+  '#F3722A','#4ECDC4','#F18A21','#45B7D1','#96CEB4','#DDA0DD',
 ]
 
 export default function Console() {
@@ -22,7 +22,7 @@ export default function Console() {
   const curQ = session?.current_question ?? -1
   const question = curQ >= 0 ? QUESTIONS[curQ] : null
 
-  const SPEED_BONUS = [0.18, 0.13, 0.09]
+  // Water levels from answers
   const waterLevels = {}
   if (players.length) {
     players.forEach(p => { waterLevels[p.id] = 0 })
@@ -36,15 +36,26 @@ export default function Console() {
     }
   }
 
-  const colorOf = id => {
-    const idx = players.findIndex(p => p.id === id)
-    return COLORS[idx % COLORS.length]
-  }
+  // Stable race order (join order so rows don't jump around)
+  const raceOrder = [...players].sort((a, b) => new Date(a.joined_at) - new Date(b.joined_at))
+  const colorOf = id => COLORS[raceOrder.findIndex(p => p.id === id) % COLORS.length]
 
-  const sorted = [...players].sort((a, b) => (waterLevels[b.id] || 0) - (waterLevels[a.id] || 0))
-  const topPlayers  = sorted.slice(0, TOP_N)
-  const restPlayers = sorted.slice(TOP_N)
+  // Splash animation when player answers correctly
+  const [splashes, setSplashes] = useState({})
+  const seenAns = useRef(new Set())
+  useEffect(() => {
+    const newCorrect = answers.filter(a => a.is_correct && !seenAns.current.has(a.id))
+    newCorrect.forEach(a => seenAns.current.add(a.id))
+    if (newCorrect.length) {
+      setSplashes(prev => {
+        const next = { ...prev }
+        newCorrect.forEach(a => { next[a.player_id] = (prev[a.player_id] || 0) + 1 })
+        return next
+      })
+    }
+  }, [answers])
 
+  // Timer
   const [timerVal, setTimerVal] = useState(TIMER_SEC)
   const timerRef = useRef(null)
   useEffect(() => {
@@ -58,6 +69,7 @@ export default function Console() {
 
   const winner = players.find(p => (waterLevels[p.id] || 0) >= 1)
   const answeredThisQ = answers.filter(a => a.question_index === curQ).length
+  const timerPct = (timerVal / TIMER_SEC) * 100
   const timerColor = timerVal <= 5 ? '#ff4444' : timerVal <= 9 ? '#F18A21' : '#F3722A'
   const timerBg = timerVal > 8
     ? 'linear-gradient(90deg,#F3722A,#E4630E)'
@@ -69,144 +81,142 @@ export default function Console() {
     <div className={styles.noSession}>
       <AreyaLogo size={48} />
       <h2>Consola Principal</h2>
-      <p>Abre <strong>/admin</strong> para crear una sesión y obtener este link.</p>
+      <p>Abre <strong>/admin</strong> para crear una sesión.</p>
     </div>
   )
 
   if (loading) return (
     <div className={styles.loading}>
-      <AreyaLogo size={40} /><span>Cargando sesión...</span>
+      <AreyaLogo size={40} /><span>Cargando...</span>
     </div>
   )
 
   return (
     <div className={styles.wrap}>
 
-      {/* HEADER */}
+      {/* ── HEADER ── */}
       <div className={styles.header}>
-        <AreyaLogo size={24} />
-        <span className={styles.gameTitle}>💦 AGUA, AGUA, AGUA!</span>
-        <span className={styles.sessionCode}>Código: <strong>{sessionId?.slice(-6).toUpperCase()}</strong></span>
+        <AreyaLogo size={22} />
+        <span className={styles.gameTitle}>🔫 TIRO AL BLANCO — AREYA</span>
+        <span className={styles.code}>Código: <strong>{sessionId?.slice(-6).toUpperCase()}</strong></span>
       </div>
 
-      {/* WINNER BANNER */}
+      {/* ── QUESTION STRIP ── */}
+      {session?.status === 'playing' && question && (
+        <div className={styles.qStrip}>
+          <div className={styles.qLine}>
+            <span className={styles.qNum}>P{curQ + 1}/{QUESTIONS.length}</span>
+            <span className={styles.qText}>{question.q}</span>
+            <span className={styles.qCount}>{answeredThisQ}/{players.length}</span>
+            <span className={styles.timerNum} style={{ color: timerColor }}>⏱ {timerVal}s</span>
+          </div>
+          <div className={styles.timerBar}>
+            <div className={styles.timerFill} style={{ width: `${timerPct}%`, background: timerBg }} />
+          </div>
+          <div className={styles.opts}>
+            {(question.tf ? question.opts.slice(0, 2) : question.opts).map((o, i) => (
+              <span key={i} className={styles.opt}>
+                <span className={styles.letter}>{String.fromCharCode(65 + i)}</span>{o}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── WAITING STRIP ── */}
+      {session?.status === 'waiting' && (
+        <div className={styles.waitStrip}>
+          <span className={styles.waitText}>🔫 Esperando jugadores — <strong>{players.length}</strong> registrados</span>
+          <span className={styles.waitUrl}>📱 {window.location.origin}/play?session={sessionId}</span>
+        </div>
+      )}
+
+      {/* ── FINISHED ── */}
+      {session?.status === 'finished' && (
+        <div className={styles.waitStrip}>
+          <span className={styles.waitText}>🏁 Juego terminado{winner ? ` — Ganador: ${winner.name}` : ''}</span>
+        </div>
+      )}
+
+      {/* ── WINNER BANNER ── */}
       {winner && (
         <div className={styles.winnerBanner}>
-          🏆 ¡GANADOR: {winner.name}! 🎉
+          🏆 ¡{winner.name} ganó la carrera! 🎉
         </div>
       )}
 
-      {/* MAIN SPLIT */}
-      <div className={styles.mainSplit}>
-
-        {/* ── LEFT: Pregunta ── */}
-        <div className={styles.leftPanel}>
-
-          {session?.status === 'waiting' && (
-            <div className={styles.waitState}>
-              <div className={styles.waitIcon}>🔫</div>
-              <div className={styles.waitTitle}>Esperando jugadores...</div>
-              <div className={styles.waitCount}>{players.length} registrados</div>
-              <div className={styles.waitUrl}>
-                📱 {window.location.origin}/play?session={sessionId}
-              </div>
-            </div>
-          )}
-
-          {session?.status === 'finished' && (
-            <div className={styles.waitState}>
-              <div className={styles.waitIcon}>🏁</div>
-              <div className={styles.waitTitle}>¡Juego terminado!</div>
-              {winner && <div className={styles.waitCount}>Ganador: {winner.name}</div>}
-            </div>
-          )}
-
-          {session?.status === 'playing' && question && (
-            <div className={styles.qPanel}>
-              <div className={styles.qMeta}>
-                <span className={styles.qNum}>PREGUNTA {curQ + 1} / {QUESTIONS.length}</span>
-                <span className={styles.qAnswered}>{answeredThisQ} / {players.length} respondieron</span>
-                <span className={styles.timerNum} style={{ color: timerColor }}>⏱ {timerVal}s</span>
-              </div>
-              <div className={styles.timerBar}>
-                <div className={styles.timerFill} style={{ width: `${(timerVal / TIMER_SEC) * 100}%`, background: timerBg }} />
-              </div>
-              <div className={styles.qText}>{question.q}</div>
-              <div className={styles.qOpts} style={{ gridTemplateColumns: question.tf ? '1fr 1fr' : '1fr 1fr' }}>
-                {(question.tf ? question.opts.slice(0, 2) : question.opts).map((o, i) => (
-                  <div key={i} className={styles.qOpt}>
-                    <span className={styles.qLetter}>{String.fromCharCode(65 + i)}</span>
-                    <span>{o}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+      {/* ── RACE TRACK ── */}
+      <div className={styles.race}>
+        {/* Finish line overlay */}
+        <div className={styles.finishOverlay}>
+          <span className={styles.finishFlag}>🏁</span>
+          <div className={styles.finishLine} />
         </div>
 
-        {/* ── RIGHT: Marcador ── */}
-        <div className={styles.rightPanel}>
-          <div className={styles.leaderHeader}>
-            <span className={styles.leaderTitle}>🏆 MARCADOR</span>
-            <span className={styles.leaderCount}>{players.length} jugadores</span>
+        {raceOrder.length === 0 && (
+          <div className={styles.emptyRace}>
+            Esperando jugadores...
           </div>
+        )}
 
-          {players.length === 0 ? (
-            <div className={styles.noPlayers}>Sin jugadores aún</div>
-          ) : (
-            <>
-              <div className={styles.leaderList}>
-                {topPlayers.map((p, i) => {
-                  const wl = waterLevels[p.id] || 0
-                  const color = colorOf(p.id)
-                  const answeredThis = answers.some(a => a.player_id === p.id && a.question_index === curQ)
-                  const isWinner = wl >= 1
-                  return (
-                    <div key={p.id} className={styles.leaderRow} style={{ background: isWinner ? 'rgba(243,114,42,.1)' : undefined }}>
-                      <span className={styles.rank} style={{ color: i === 0 ? '#F3722A' : i === 1 ? '#8597AC' : i === 2 ? '#F5B979' : '#676B73' }}>
-                        {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
-                      </span>
-                      <span className={styles.dot} style={{ background: color }} />
-                      <span className={styles.pName}>{p.name}</span>
-                      {answeredThis && session?.status === 'playing' && (
-                        <span className={styles.answeredBadge}>✓</span>
-                      )}
-                      <div className={styles.barWrap}>
-                        <div className={styles.barFill} style={{ width: `${wl * 100}%`, background: color }} />
-                      </div>
-                      <span className={styles.pct}>{Math.round(wl * 100)}%</span>
-                    </div>
-                  )
-                })}
+        {raceOrder.map((p) => {
+          const wl = waterLevels[p.id] || 0
+          const color = colorOf(p.id)
+          const isWinner = wl >= 1
+          const splashKey = splashes[p.id]
+          const answeredThis = answers.some(a => a.player_id === p.id && a.question_index === curQ)
+
+          return (
+            <div
+              key={p.id}
+              className={`${styles.row} ${isWinner ? styles.rowWinner : ''}`}
+              style={{ '--c': color }}
+            >
+              {/* Horse name + player name */}
+              <div className={styles.nameCol}>
+                <span className={styles.horseName}>{p.horse_name || p.name}</span>
+                {p.horse_name && <span className={styles.playerSmall}>{p.name}</span>}
               </div>
 
-              {restPlayers.length > 0 && (
-                <div className={styles.restSection}>
-                  <div className={styles.restLabel}>+ {restPlayers.length} jugadores más</div>
-                  <div className={styles.restGrid}>
-                    {restPlayers.map(p => {
-                      const answeredThis = answers.some(a => a.player_id === p.id && a.question_index === curQ)
-                      return (
-                        <span key={p.id} className={styles.chip} style={{ borderColor: colorOf(p.id) + '55' }}>
-                          <span style={{ color: colorOf(p.id) }}>●</span> {p.name}
-                          {answeredThis && session?.status === 'playing' && ' ✓'}
-                        </span>
-                      )
-                    })}
-                  </div>
+              {/* Track */}
+              <div className={styles.track}>
+                {/* Water fill behind horse */}
+                <div
+                  className={styles.fill}
+                  style={{ width: `${wl * 100}%`, background: `${color}30` }}
+                />
+
+                {/* Horse */}
+                <div
+                  className={styles.horse}
+                  style={{ '--wl': wl }}
+                >
+                  {isWinner ? '🏆' : '🏇'}
                 </div>
+
+                {/* Splash on correct answer */}
+                {splashKey && (
+                  <span
+                    key={`s-${splashKey}`}
+                    className={styles.splash}
+                    style={{ '--wl': wl }}
+                  >💧</span>
+                )}
+              </div>
+
+              {/* Answered indicator */}
+              {answeredThis && session?.status === 'playing' && (
+                <span className={styles.check}>✓</span>
               )}
-            </>
-          )}
-        </div>
+            </div>
+          )
+        })}
       </div>
 
-      {/* FOOTER */}
-      {session?.status !== 'waiting' && (
-        <div className={styles.footer}>
-          📱 Únete: <strong>{window.location.origin}/play?session={sessionId}</strong>
-        </div>
-      )}
+      {/* ── FOOTER ── */}
+      <div className={styles.footer}>
+        📱 Únete: <strong>{window.location.origin}/play?session={sessionId}</strong>
+      </div>
     </div>
   )
 }

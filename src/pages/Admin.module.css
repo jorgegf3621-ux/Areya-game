@@ -33,7 +33,10 @@
 .correctTag { margin-left:auto; font-size:.68rem; color:#F3722A; font-weight:700; background:rgba(243,114,42,.12); padding:2px 8px; border-radius:10px; }
 
 .playersCard { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px 14px; }
-.cardTitle { font-family:'Fredoka One',cursive; color:#F3722A; font-size:1rem; margin-bottom:10px; }
+.cardTitleRow { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; gap:10px; flex-wrap:wrap; }
+.cardTitle { font-family:'Fredoka One',cursive; color:#F3722A; font-size:1rem; }
+.btnDownload { background:rgba(78,205,196,.1); border:1px solid rgba(78,205,196,.3); border-radius:8px; padding:6px 14px; color:#4ECDC4; font-size:.78rem; font-weight:700; cursor:pointer; transition:all .2s; }
+.btnDownload:hover { background:rgba(78,205,196,.2); }
 .tableWrap { overflow-x:auto; }
 .table { width:100%; border-collapse:collapse; font-size:.82rem; }
 .table th { color:#8597AC; font-weight:700; text-align:left; padding:6px 8px; border-bottom:1px solid rgba(255,255,255,.08); font-size:.72rem; text-transform:uppercase; letter-spacing:.8px; }
