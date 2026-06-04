@@ -1,0 +1,27 @@
+.wrap { min-height:100vh; background:#282E38; padding:12px; display:flex; flex-direction:column; gap:10px; }
+.header { display:flex; align-items:center; gap:14px; padding:8px 0; border-bottom:1px solid rgba(243,114,42,.2); }
+.gameTitle { font-family:'Fredoka One',cursive; font-size:1.5rem; color:#F3722A; letter-spacing:2px; text-shadow:0 0 16px rgba(243,114,42,.35); flex:1; text-align:center; }
+.sessionCode { font-size:.8rem; color:#8597AC; font-weight:700; }
+.questionBox { background:rgba(255,255,255,.04); border:1px solid rgba(243,114,42,.2); border-radius:14px; padding:14px 18px; }
+.qTop { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.qNum { font-size:.72rem; color:#8597AC; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; }
+.timerNum { font-family:'Fredoka One',cursive; font-size:1.2rem; transition:color .3s; }
+.timerBar { height:7px; background:rgba(255,255,255,.08); border-radius:4px; overflow:hidden; margin-bottom:10px; }
+.timerFill { height:100%; border-radius:4px; transition:width .1s linear, background .5s; }
+.qText { font-size:1.05rem; color:#E1E6EB; font-weight:700; line-height:1.4; margin-bottom:10px; text-align:center; }
+.qOpts { display:grid; gap:6px; }
+.qOpt { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:8px 12px; display:flex; align-items:center; gap:8px; font-size:.88rem; color:#D6DCE3; }
+.qOptLetter { font-family:'Fredoka One',cursive; color:#F3722A; font-size:.95rem; min-width:18px; }
+.waiting { text-align:center; padding:20px; }
+.waitingIcon { font-size:2.5rem; margin-bottom:6px; }
+.waitingText { font-family:'Fredoka One',cursive; font-size:1.4rem; color:#F3722A; }
+.waitingCount { font-size:1rem; color:#8597AC; margin:4px 0; }
+.joinUrl { font-size:.8rem; color:#8597AC; margin-top:8px; background:rgba(255,255,255,.04); padding:8px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.08); }
+.finishedBanner { background:linear-gradient(135deg,rgba(243,114,42,.15),rgba(228,99,14,.1)); border:1px solid #F3722A; border-radius:12px; padding:12px 20px; text-align:center; font-family:'Fredoka One',cursive; font-size:1.5rem; color:#F3722A; }
+.towersGrid { display:grid; gap:10px; flex:1; }
+.towerCol { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.playerName { font-family:'Fredoka One',cursive; font-size:.88rem; text-align:center; }
+.playerScore { font-size:.72rem; color:#8597AC; font-weight:700; }
+.footer { text-align:center; font-size:.75rem; color:#676B73; padding:4px 0; border-top:1px solid rgba(255,255,255,.06); }
+.noSession, .loading { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; color:#8597AC; font-size:1rem; }
+.noSession h2 { font-family:'Fredoka One',cursive; color:#F3722A; font-size:1.6rem; }

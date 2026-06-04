@@ -1,0 +1,28 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --areya-orange: #F3722A;
+  --areya-orange2: #F18A21;
+  --areya-amber: #F5B979;
+  --areya-dark: #282E38;
+  --areya-dark2: #343539;
+  --areya-slate: #8597AC;
+  --areya-blue: #282E38;
+  --areya-light: #D6DCE3;
+  --areya-lighter: #E1E6EB;
+}
+
+html, body, #root {
+  min-height: 100vh;
+  font-family: 'Nunito', sans-serif;
+  background: var(--areya-dark);
+  color: var(--areya-lighter);
+  overflow-x: hidden;
+}
+
+button { font-family: 'Nunito', sans-serif; cursor: pointer; }
+input  { font-family: 'Nunito', sans-serif; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,.05); }
+::-webkit-scrollbar-thumb { background: var(--areya-orange); border-radius: 3px; }

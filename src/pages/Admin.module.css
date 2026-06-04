@@ -1,0 +1,45 @@
+.wrap { min-height:100vh; background:#282E38; padding:14px; display:flex; flex-direction:column; gap:12px; }
+.header { display:flex; align-items:center; gap:10px; padding-bottom:10px; border-bottom:1px solid rgba(243,114,42,.18); }
+.adminTitle { font-family:'Fredoka One',cursive; font-size:1.1rem; color:#F3722A; flex:1; }
+.statusBadge { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:3px 10px; border-radius:12px; background:rgba(255,255,255,.07); color:#8597AC; }
+.statusBadge[data-status="waiting"]  { background:rgba(133,151,172,.15); color:#8597AC; }
+.statusBadge[data-status="playing"]  { background:rgba(243,114,42,.18); color:#F3722A; }
+.statusBadge[data-status="finished"] { background:rgba(165,166,162,.12); color:#A5A6A2; }
+
+.noSession { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; }
+.bigIcon { font-size:3rem; }
+.noSession h3 { font-family:'Fredoka One',cursive; color:#F3722A; font-size:1.4rem; }
+.noSession p { color:#8597AC; font-size:.9rem; }
+
+.urlsBox { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; }
+.urlRow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.urlLabel { font-size:.75rem; color:#8597AC; font-weight:700; min-width:160px; }
+.urlLink { font-size:.78rem; color:#F3722A; text-decoration:none; word-break:break-all; }
+.urlLink:hover { text-decoration:underline; }
+
+.controls { display:flex; gap:8px; flex-wrap:wrap; }
+.btnOrange { background:linear-gradient(135deg,#F3722A,#E4630E); border:none; border-radius:10px; padding:10px 22px; color:#fff; font-family:'Fredoka One',cursive; font-size:.9rem; letter-spacing:1px; cursor:pointer; transition:all .2s; box-shadow:0 3px 12px rgba(243,114,42,.28); }
+.btnOrange:hover { transform:translateY(-1px); } .btnOrange:disabled { opacity:.35; cursor:not-allowed; transform:none; }
+.btnGray { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.13); border-radius:10px; padding:10px 18px; color:#A5A6A2; font-family:'Fredoka One',cursive; font-size:.9rem; cursor:pointer; }
+.btnGray:hover { background:rgba(255,255,255,.1); }
+.btnDanger { background:rgba(255,60,60,.1); border:1px solid rgba(255,60,60,.2); border-radius:10px; padding:10px 18px; color:#ff8888; font-family:'Fredoka One',cursive; font-size:.9rem; cursor:pointer; }
+.btnDanger:hover { background:rgba(255,60,60,.18); }
+
+.qCard { background:rgba(255,255,255,.04); border:1px solid rgba(243,114,42,.2); border-radius:12px; padding:12px 14px; }
+.qCardNum { font-size:.72rem; color:#8597AC; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+.qCardText { font-size:.95rem; color:#E1E6EB; font-weight:700; line-height:1.4; margin-bottom:10px; }
+.qAnswersList { display:flex; flex-direction:column; gap:5px; }
+.qAnswerOpt { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:8px; border:1px solid; font-size:.8rem; color:#D6DCE3; }
+.correctTag { margin-left:auto; font-size:.68rem; color:#F3722A; font-weight:700; background:rgba(243,114,42,.12); padding:2px 8px; border-radius:10px; }
+
+.playersCard { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px 14px; }
+.cardTitle { font-family:'Fredoka One',cursive; color:#F3722A; font-size:1rem; margin-bottom:10px; }
+.tableWrap { overflow-x:auto; }
+.table { width:100%; border-collapse:collapse; font-size:.82rem; }
+.table th { color:#8597AC; font-weight:700; text-align:left; padding:6px 8px; border-bottom:1px solid rgba(255,255,255,.08); font-size:.72rem; text-transform:uppercase; letter-spacing:.8px; }
+.table td { padding:7px 8px; border-bottom:1px solid rgba(255,255,255,.05); color:#D6DCE3; }
+.table tr:last-child td { border-bottom:none; }
+.nameTd { font-weight:700; }
+.centerTd { text-align:center; }
+.miniBar { width:80px; height:6px; background:rgba(255,255,255,.08); border-radius:3px; overflow:hidden; }
+.okTag { color:#F3722A; font-weight:900; } .noTag { color:#676B73; font-weight:900; }
